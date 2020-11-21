@@ -2,6 +2,8 @@
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
+    prometheus: prometheus
   name: prometheus
 spec:
   type: NodePort
