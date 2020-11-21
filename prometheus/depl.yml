@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  namespace: test
+spec:
+  thanos:
+    version: v0.17.0
+  serviceMonitorSelector:
+    matchLabels:
+      prometheus: prometheus
+  resources:
+    requests:
+      memory: 400Mi
