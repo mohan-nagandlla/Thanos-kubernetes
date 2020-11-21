@@ -4,6 +4,7 @@ metadata:
   name: prometheus
   namespace: test
 spec:
+  serviceAccountName: prometheus
   thanos:
     version: v0.17.0
   serviceMonitorSelector:
