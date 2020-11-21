@@ -51,3 +51,11 @@ subjects:
 - kind: ServiceAccount
   name: prometheus
   namespace: test
+  
+  ---
+  
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: test
