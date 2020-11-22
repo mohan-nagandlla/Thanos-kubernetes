@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: thanos-bucketweb
+  name: thanos-bucketweb
+  namespace: test
+spec:
+  serviceName: thanos-bucketweb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-bucketweb
+  template:
+    metadata:
+      labels:
+        app: thanos-bucketweb
+    spec:
+      containers:
+      - args:
+        - tools
+        - bucket
+        - web
+        - --http-address=0.0.0.0:8080
+        - --log.level=info
+        - --objstore.config-file=/config/thanos-store.yml
+        - --refresh=30m
+        - --timeout=5m
+        image: quay.io/thanos/thanos:v0.17.0
+        imagePullPolicy: IfNotPresent
+        name: bucketweb
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        volumeMounts:
+        - name: config
+          mountPath: /config/
+          readOnly: true
+        - name: data
+          mountPath: /var/thanos/bucketweb
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: thanos-store-config
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app: thanos-bucketweb
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
