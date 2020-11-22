@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    prometheus: prometheus
+  name: thanos-compactor
+  namespace: test
+spec:
+  endpoints:
+  - port: http
+  selector:
+    matchLabels:
+      app: thanos-compactor
+  namespaceSelector:
+    matchNames:
+    - test

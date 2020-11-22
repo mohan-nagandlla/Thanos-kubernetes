@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-compactor
+  namespace: test
+  labels:
+    app: thanos-compactor
+spec:
+  serviceName: thanos-compactor
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-compactor
+  template:
+    metadata:
+      labels:
+        app: thanos-compactor
+    spec:
+      containers:
+      - name: thanos-compactor
+        image: quay.io/thanos/thanos:v0.17.0
+        args:
+        - compact
+        - --log.level=info
+        - --data-dir=/var/thanos/compact
+        - --objstore.config-file=/config/thanos-store.yml
+        - --wait
+        ports:
+        - name: http
+          containerPort: 10902
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
+        volumeMounts:
+        - name: config
+          mountPath: /config/
+          readOnly: true
+        - name: data
+          mountPath: /var/thanos/store
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: thanos-store-config
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app: thanos-compact
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
