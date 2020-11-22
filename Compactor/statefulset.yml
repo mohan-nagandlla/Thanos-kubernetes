@@ -40,7 +40,7 @@ spec:
           mountPath: /config/
           readOnly: true
         - name: data
-          mountPath: /var/thanos/store
+          mountPath: /var/thanos/compactor
       volumes:
       - name: data
         emptyDir: {}
