@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: thanos-receiver
+  name: thanos-receiver
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-receiver
+  serviceName: thanos-receiver
+  template:
+    metadata:
+      labels:
+        app: thanos-receiver
+    spec:
+      containers:
+      - args:
+        - receive
+        - --log.level=info
+        - --objstore.config-file=/config/thanos-store.yml
+        image: quay.io/thanos/thanos:v0.17.0
+        name: thanos-receive
+        ports:
+        - containerPort: 10901
+          name: grpc
+        - containerPort: 10902
+          name: http
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
+        volumeMounts:
+        - name: config
+          mountPath: /config/
+          readOnly: true
+        - name: data
+          mountPath: /var/thanos/receiver
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: thanos-store-config
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app: thanos-receiver
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
