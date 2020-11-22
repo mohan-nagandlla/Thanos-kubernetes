@@ -6,7 +6,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 9000
+    - name: http
+      port: 9000
       targetPort: 9000
       protocol: TCP
   selector:
