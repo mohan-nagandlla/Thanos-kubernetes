@@ -22,7 +22,7 @@ spec:
         args:
         - compact
         - --log.level=info
-        - --data-dir=/var/thanos/compact
+        - --data-dir=/var/thanos/compactor
         - --objstore.config-file=/config/thanos-store.yml
         - --wait
         ports:
