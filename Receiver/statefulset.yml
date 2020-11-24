@@ -20,14 +20,22 @@ spec:
       - args:
         - receive
         - --log.level=info
+        - --tsdb.path=/prometheus
+        - --grpc-address=0.0.0.0:10901
+        - --http-address=0.0.0.0:9090
+        - --remote-write.address=0.0.0.0:19291
+        - --receive.replication-factor=1
         - --objstore.config-file=/config/thanos-store.yml
+        - --receive.local-endpoint=thanos-receive.depl.svc.cluster.local:10901
         image: quay.io/thanos/thanos:v0.17.0
         name: thanos-receive
         ports:
         - containerPort: 10901
           name: grpc
-        - containerPort: 10902
+        - containerPort: 9090
           name: http
+        - containerPort: 19291
+          name: remote-write
         resources:
           limits:
             cpu: 0.42
